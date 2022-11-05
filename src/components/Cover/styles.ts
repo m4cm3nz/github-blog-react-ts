@@ -11,5 +11,7 @@ export const CoverContainer = styled.header`
 
   display: flex;
   justify-content: center;
-  align-items: center;
+
+  padding-top: 4rem;
+  padding-bottom: 8.375rem;
 `
