@@ -21,25 +21,25 @@ export function Blog() {
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
             </a>
           </header>
-          <article>
+          <p>
             Tristique volutpat pulvinar vel massa, pellentesque egestas. Eu
             viverra massa quam dignissim aenean malesuada suscipit. Nunc,
             volutpat pulvinar vel mass.
-          </article>
-          <footer>
-            <div>
+          </p>
+          <nav>
+            <a href="#">
               <FontAwesomeIcon icon={faGithub} />
               m4cm3nz
-            </div>
-            <div>
+            </a>
+            <a href="#">
               <FontAwesomeIcon icon={faBuilding} />
               m4cm3nz.it
-            </div>
-            <div>
+            </a>
+            <a href="#">
               <FontAwesomeIcon icon={faUserGroup} />
               11 seguidores
-            </div>
-          </footer>
+            </a>
+          </nav>
         </div>
       </Profile>
       <InputContainer>

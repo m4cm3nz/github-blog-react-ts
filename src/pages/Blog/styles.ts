@@ -76,7 +76,7 @@ export const Profile = styled.div`
     }
   }
 
-  article {
+  p {
     margin-bottom: 1.5rem;
 
     font-weight: 400;
@@ -85,14 +85,14 @@ export const Profile = styled.div`
     color: ${(props) => props.theme['base-text']};
   }
 
-  footer {
+  nav {
     display: inline-flex;
     gap: 1.5rem;
 
-    div {
-      svg {
-        color: ${(props) => props.theme['base-label']};
-      }
+    a {
+      color: ${(props) => props.theme['base-label']};
+
+      text-decoration: none;
 
       display: inline-flex;
       align-items: center;
