@@ -5,7 +5,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { BlogContainer, InputContainer, Posts, Profile } from './styles'
+import {
+  BlogContainer,
+  InputContainer,
+  Posts,
+  ProfileContainer,
+  NavigationLinks,
+  ProfileHeader,
+  Bio,
+} from './styles'
 import { Post } from './components/Post'
 import { api } from '../../lib/api'
 import { useEffect, useState } from 'react'
@@ -19,6 +27,13 @@ interface User {
   followers: number
 }
 
+export interface Issue {
+  id: number
+  title: string
+  body: string
+  updatedAt: Date
+}
+
 export function Blog() {
   const [user, setUser] = useState<User>({
     login: '',
@@ -29,29 +44,51 @@ export function Blog() {
     followers: 0,
   })
 
+  const [issues, setIssues] = useState<Issue[]>([])
+
   async function LoadUser() {
     const response = await api.get<User>('users/m4cm3nz')
     setUser(response.data)
   }
 
+  async function LoadIssues(text?: string) {
+    const response = await api.get('search/issues', {
+      params: {
+        q: 'repo:m4cm3nz/github-blog-react-ts',
+      },
+    })
+
+    const allIssues = response.data.items.map((item: any) => {
+      return {
+        ...item,
+        updatedAt: item.updated_at,
+      } as Issue
+    })
+
+    setIssues(allIssues)
+  }
+
   useEffect(() => {
     LoadUser()
+    LoadIssues()
   }, [])
 
   return (
     <BlogContainer>
-      <Profile>
+      <ProfileContainer>
         <img src="https://github.com/m4cm3nz.png" alt=""></img>
         <div>
-          <header>
-            <h5>{user.name}</h5>
-            <a href="#">
-              GITHUB
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-            </a>
-          </header>
-          <p>{user.bio}</p>
-          <nav>
+          <Bio>
+            <ProfileHeader>
+              <h5>{user.name}</h5>
+              <a href={user.htmlUrl}>
+                GITHUB
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </a>
+            </ProfileHeader>
+            <p>{user.bio}</p>
+          </Bio>
+          <NavigationLinks>
             <a href={user.htmlUrl}>
               <FontAwesomeIcon icon={faGithub} />
               {user.login}
@@ -66,9 +103,9 @@ export function Blog() {
               <FontAwesomeIcon icon={faUserGroup} />
               {user.followers} seguidores
             </a>
-          </nav>
+          </NavigationLinks>
         </div>
-      </Profile>
+      </ProfileContainer>
       <InputContainer>
         <header>
           <h3>Publicações</h3>
@@ -77,15 +114,11 @@ export function Blog() {
         <input placeholder="Buscar conteúdo" />
       </InputContainer>
       <Posts>
-        <li>
-          <Post />
-        </li>
-        <li>
-          <Post />
-        </li>
-        <li>
-          <Post />
-        </li>
+        {issues.map((issue) => (
+          <li key={issue.id}>
+            <Post {...{ ...issue, content: issue.body }} />
+          </li>
+        ))}
       </Posts>
     </BlogContainer>
   )
