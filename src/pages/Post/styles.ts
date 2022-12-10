@@ -90,5 +90,9 @@ export const Content = styled.article`
   font-size: 16px;
   line-height: 160%;
 
+  a {
+    color: ${(props) => props.theme['brand-blue']};
+  }
+
   color: ${(props) => props.theme['base-text']};
 `

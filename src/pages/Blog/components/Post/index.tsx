@@ -1,21 +1,33 @@
-import { PostContainer } from './styles'
+import { NavLink } from 'react-router-dom'
+import { Article } from './styles'
 
-interface PostProps {
+interface Issue {
+  number: number
   title: string
-  content: string
-  updatedAt: Date
+  body: string
+  age: Date
 }
 
-export function Post(data: PostProps) {
-  const { title, content, updatedAt } = data
+interface PostProps {
+  issue: Issue
+}
+
+export function Post({ issue }: PostProps) {
+  const { title, body, age: updatedAt, number } = issue
 
   return (
-    <PostContainer>
-      <header>
-        <h3>{title}</h3>
-        <span>{updatedAt.toString()}</span>
-      </header>
-      <p>{content}</p>
-    </PostContainer>
+    <NavLink
+      to={`/issue/${number}`}
+      title="my cart"
+      style={{ textDecoration: 'none' }}
+    >
+      <Article>
+        <header>
+          <h3>{title}</h3>
+          <span>{updatedAt.toString()}</span>
+        </header>
+        <p>{body}</p>
+      </Article>
+    </NavLink>
   )
 }

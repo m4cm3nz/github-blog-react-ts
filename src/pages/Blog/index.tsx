@@ -1,3 +1,4 @@
+import { FormEvent, useEffect, useState } from 'react'
 import {
   faArrowUpRightFromSquare,
   faBuilding,
@@ -16,7 +17,8 @@ import {
 } from './styles'
 import { Post } from './components/Post'
 import { api } from '../../lib/api'
-import { useEffect, useState } from 'react'
+import { formatDistanceToNow } from 'date-fns'
+import ptBR from 'date-fns/locale/pt-BR'
 
 interface User {
   login: string
@@ -29,9 +31,10 @@ interface User {
 
 export interface Issue {
   id: number
+  number: number
   title: string
   body: string
-  updatedAt: Date
+  age: Date
 }
 
 export function Blog() {
@@ -46,32 +49,57 @@ export function Blog() {
 
   const [issues, setIssues] = useState<Issue[]>([])
 
-  async function LoadUser() {
-    const response = await api.get<User>('users/m4cm3nz')
-    setUser(response.data)
+  async function loadUser() {
+    const response = await api.get('users/m4cm3nz')
+    const user = {
+      ...response.data,
+      htmlUrl: response.data.html_url,
+    }
+    setUser(user)
   }
 
-  async function LoadIssues(text?: string) {
+  async function loadIssues(text?: string) {
+    let query = 'repo:m4cm3nz/github-blog-react-ts'
+
+    if (text) query = `${query} ${text}`
+
     const response = await api.get('search/issues', {
       params: {
-        q: 'repo:m4cm3nz/github-blog-react-ts',
+        q: query,
       },
     })
 
     const allIssues = response.data.items.map((item: any) => {
       return {
         ...item,
-        updatedAt: item.updated_at,
+        age: formatDistanceToNow(new Date(item.updated_at), {
+          locale: ptBR,
+          addSuffix: true,
+        }),
       } as Issue
     })
 
     setIssues(allIssues)
   }
 
+  const [searchTerm, setSearchTerm] = useState('')
+
   useEffect(() => {
-    LoadUser()
-    LoadIssues()
+    loadUser()
+    loadIssues()
   }, [])
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      loadIssues(searchTerm)
+    }, 1000)
+
+    return () => clearTimeout(delayDebounce)
+  }, [searchTerm])
+
+  function handleUserTextTyping(event: FormEvent<HTMLInputElement>) {
+    setSearchTerm(event.currentTarget.value)
+  }
 
   return (
     <BlogContainer>
@@ -94,12 +122,16 @@ export function Blog() {
               {user.login}
             </a>
             {user.company && (
-              <a href="#">
+              <a href="" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faBuilding} />
                 {user.company}
               </a>
             )}
-            <a href="#">
+            <a
+              href="https://github.com/m4cm3nz?tab=followers"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FontAwesomeIcon icon={faUserGroup} />
               {user.followers} seguidores
             </a>
@@ -109,14 +141,14 @@ export function Blog() {
       <InputContainer>
         <header>
           <h3>Publicações</h3>
-          <span>6 publicações</span>
+          <span>{issues.length} publicações</span>
         </header>
-        <input placeholder="Buscar conteúdo" />
+        <input placeholder="Buscar conteúdo" onInput={handleUserTextTyping} />
       </InputContainer>
       <Posts>
         {issues.map((issue) => (
           <li key={issue.id}>
-            <Post {...{ ...issue, content: issue.body }} />
+            <Post issue={issue} />
           </li>
         ))}
       </Posts>

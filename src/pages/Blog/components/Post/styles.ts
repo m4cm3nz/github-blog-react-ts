@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const PostContainer = styled.article`
+export const Article = styled.article`
   padding: 2rem;
   border-radius: 10px;
 
@@ -22,6 +22,9 @@ export const PostContainer = styled.article`
     }
 
     span {
+      flex: 1;
+      text-align: right;
+
       margin-top: 0.3125rem;
 
       font-size: 0.875rem;

@@ -163,6 +163,8 @@ export const Posts = styled.ul`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+
+  width: 100%;
   padding-bottom: 8rem;
 
   gap: 2rem;
