@@ -1,4 +1,4 @@
-# github-blog-react-ts
+# Github Blog
 
 Desafio Rocketseat Ignite  
 Consumindo a API do Github em um blog pessoal.  
